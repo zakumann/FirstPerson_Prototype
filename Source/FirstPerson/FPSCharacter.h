@@ -37,7 +37,10 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	void Move(const FInputActionValue& Value);
+	void MoveForward(const FInputActionValue& Value);
+	void MoveBackward(const FInputActionValue& Value);
+	void MoveRight(const FInputActionValue& Value);
+	void MoveLeft(const FInputActionValue& Value);
 
 	void Look(const FInputActionValue& Value);
 

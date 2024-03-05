@@ -70,30 +70,55 @@ void AFPSCharacter::BeginPlay()
 	
 }
 
-void AFPSCharacter::Move(const FInputActionValue& Value)
+void AFPSCharacter::MoveForward(const FInputActionValue& Value)
 {
 	if (Controller != nullptr)
 	{
 		const FVector2D MoveValue = Value.Get<FVector2D>();
 		const FRotator MovementRotation(0, Controller->GetControlRotation().Yaw, 0);
 
-		// Forward/Backward direction
-		if (MoveValue.Y != 0.f)
-		{
-			// Get forward vector
-			const FVector Direction = MovementRotation.RotateVector(FVector::ForwardVector);
+		const FVector ForwardDirection = FRotationMatrix(MovementRotation).GetUnitAxis(EAxis::X);
 
-			AddMovementInput(Direction, MoveValue.Y);
-		}
+		AddMovementInput(ForwardDirection, MoveValue.Y);
+	}
+}
 
-		// Right/Left direction
-		if (MoveValue.X != 0.f)
-		{
-			// Get right vector
-			const FVector Direction = MovementRotation.RotateVector(FVector::RightVector);
+void AFPSCharacter::MoveBackward(const FInputActionValue& Value)
+{
+	if (Controller != nullptr)
+	{
+		const FVector2D MoveValue = Value.Get<FVector2D>();
+		const FRotator MovementRotation(0, Controller->GetControlRotation().Yaw, 0);
 
-			AddMovementInput(Direction, MoveValue.X);
-		}
+		const FVector ForwardDirection = FRotationMatrix(MovementRotation).GetUnitAxis(EAxis::X);
+
+		AddMovementInput(ForwardDirection, MoveValue.Y);
+	}
+}
+
+void AFPSCharacter::MoveRight(const FInputActionValue& Value)
+{
+	if (Controller != nullptr)
+	{
+		const FVector2D MoveValue = Value.Get<FVector2D>();
+		const FRotator MovementRotation(0, Controller->GetControlRotation().Yaw, 0);
+
+		const FVector RightDirection = FRotationMatrix(MovementRotation).GetUnitAxis(EAxis::Y);
+
+		AddMovementInput(RightDirection, MoveValue.X);
+	}
+}
+
+void AFPSCharacter::MoveLeft(const FInputActionValue& Value)
+{
+	if (Controller != nullptr)
+	{
+		const FVector2D MoveValue = Value.Get<FVector2D>();
+		const FRotator MovementRotation(0, Controller->GetControlRotation().Yaw, 0);
+
+		const FVector RightDirection = FRotationMatrix(MovementRotation).GetUnitAxis(EAxis::Y);
+
+		AddMovementInput(RightDirection, MoveValue.X);
 	}
 }
 
@@ -156,7 +181,10 @@ void AFPSCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 
 	UEnhancedInputComponent* PEI = Cast<UEnhancedInputComponent>(PlayerInputComponent);
 	// Bind the actions
-	PEI->BindAction(InputActions->InputMove, ETriggerEvent::Triggered, this, &AFPSCharacter::Move);
+	PEI->BindAction(InputActions->InputMoveForward, ETriggerEvent::Triggered, this, &AFPSCharacter::MoveForward);
+	PEI->BindAction(InputActions->InputMoveBackward, ETriggerEvent::Triggered, this, &AFPSCharacter::MoveBackward);
+	PEI->BindAction(InputActions->InputMoveRight, ETriggerEvent::Triggered, this, &AFPSCharacter::MoveRight);
+	PEI->BindAction(InputActions->InputMoveLeft, ETriggerEvent::Triggered, this, &AFPSCharacter::MoveLeft);
 	PEI->BindAction(InputActions->InputLook, ETriggerEvent::Triggered, this, &AFPSCharacter::Look);
 	PEI->BindAction(InputActions->InputSprint, ETriggerEvent::Started, this, &AFPSCharacter::Sprint);
 	PEI->BindAction(InputActions->InputSprint, ETriggerEvent::Completed, this, &AFPSCharacter::StopSprint);
